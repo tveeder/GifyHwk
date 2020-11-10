@@ -1,3 +1,0 @@
-# GifyHwk
-
-gify homework
