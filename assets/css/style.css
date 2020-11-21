@@ -1,7 +1,13 @@
 body {
-    background-image: url("../images/Blondie.jpg");
-    align-content: left;
-    background-repeat: repeat;
+    background-image: url("../images/80s.jpg");
+    /* align-content: left;
+    background-repeat: no-repeat; */
+    /* Full height */
+    height: 100%;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #instructions {
