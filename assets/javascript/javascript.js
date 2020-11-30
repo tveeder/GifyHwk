@@ -1,85 +1,93 @@
 $(document).ready(function() {
-    //Array for searched topics to be added
-    var topics = [];
-
-    function displayGIFS() {
-
-        var x = $(this).data("search");
-        console.log(x);
-
-        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + x + "&api_key=qniFp18pcQQU4SBz7jcuZjdrEVRAdBmV&limit=10";
-
-        console.log(queryURL);
-
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).done(function(response) {
-            var results = response.data;
-            console.log(results);
-            for (var i = 0; i < results.length; i++) {
-
-                var topicDiv = $("<div class='col-md-4'>");
-
-                var rating = results[i].rating;
-                var animated = results[i].images.fixed_height.url;
-                var still = results[i].images.fixed_height_still.url;
-                var image = $("<img>");
-                var p = $("<p>").text("Rating: " + rating);
-
-                image.attr("src", still);
-                image.addClass("Giphy");
-                image.attr("data-state", "still");
-                image.attr("data-still", still);
-                image.attr("data-animate", animated);
-                topicDiv.append(p);
-                topicDiv.append(image);
-                $("#gifArea").prepend(topicDiv);
-
+    // An array of actions, new actions will be pushed into this array;
+    var actions = ["Blondie", "Van Halen", "Billy Idol", "Madonna", "Prince", "Devo", "Duran Duran", "The Cure", "Run-DMC"];
+    // Creating Functions & Methods
+    // Function that displays all gif buttons
+    function displayGifButtons() {
+        $("#gifButtonsView").empty(); // erasing anything in this div id so that it doesnt duplicate the results
+        for (var i = 0; i < actions.length; i++) {
+            var gifButton = $("<button>");
+            gifButton.addClass("action");
+            gifButton.addClass("btn btn-primary")
+            gifButton.attr("data-name", actions[i]);
+            gifButton.text(actions[i]);
+            $("#gifButtonsView").append(gifButton);
+        }
+    }
+    // Function to add a new action button
+    function addNewButton() {
+        $("#addGif").on("click", function() {
+            var action = $("#action-input").val().trim();
+            if (action == "") {
+                return false; // added so user cannot add a blank button
             }
+            actions.push(action);
+
+            displayGifButtons();
+            return false;
         });
     }
-
-    //Submit button click event takes search term from form input, trims and pushes to topics array, displays button
-    $("#addTopic").on("click", function(event) {
-        event.preventDefault();
-        var newSearch = $("#Input").val().trim();
-        topics.push(newSearch);
-        console.log(topics);
-        $("#Input").val('');
-        displayButtons();
-    });
-
-    //Function iterates through topics array to display button with array values in "myButtons" section of HTML
-    function displayButtons() {
-        $("#myButtons").empty();
-        for (var i = 0; i < topics.length; i++) {
-            var a = $('<button class="btn btn-light">');
-            a.attr("id", "topic");
-            a.attr("data-search", topics[i]);
-            a.text(topics[i]);
-            $("#myButtons").append(a);
-        }
+    // Function to remove last action button
+    // Doesnt work properly yet removes all of the added buttons
+    // rather than just the last
+    function removeLastButton() {
+        $("removeGif").on("click", function() {
+            actions.pop(action);
+            displayGifButtons();
+            return false;
+        });
     }
+    // Function that displays all of the gifs
+    function displayGifs() {
+        var action = $(this).attr("data-name");
+        var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + action + "&api_key=qniFp18pcQQU4SBz7jcuZjdrEVRAdBmV&limit=10";
+        console.log(queryURL); // displays the constructed url
+        $.ajax({
+                url: queryURL,
+                method: 'GET'
+            })
+            .done(function(response) {
+                console.log(response); // console test to make sure something returns
+                $("#gifsView").empty(); // erasing anything in this div id so that it doesnt keep any from the previous click
+                var results = response.data; //shows results of gifs
+                if (results == "") {
+                    alert("There isn't a gif for this selected button");
+                }
+                for (var i = 0; i < results.length; i++) {
 
-    displayButtons();
-
-    //Click event on button with id of "topic" executes displayGIFS function
-    $(document).on("click", "#topic", displayGIFS);
-
-    //Click event on gifs with class of "Giphy" executes pausePlayGifs function
-    $(document).on("click", ".Giphy", pausePlayGifs);
-
-    //Function accesses "data-state" attribute and depending on status, changes image source to "data-animate" or "data-still"
-    function pausePlayGifs() {
-        var state = $(this).attr("data-state");
-        if (state === "still") {
-            $(this).attr("src", $(this).attr("data-animate"));
-            $(this).attr("data-state", "animate");
+                    var gifDiv = $("<div>"); //div for the gifs to go inside
+                    gifDiv.addClass("gifDiv");
+                    // pulling rating of gif
+                    var gifRating = $("<p>").text("Rating: " + results[i].rating);
+                    gifDiv.append(gifRating);
+                    // pulling gif
+                    var gifImage = $("<img>");
+                    gifImage.attr("src", results[i].images.fixed_height_small_still.url); // still image stored into src of image
+                    gifImage.attr("data-still", results[i].images.fixed_height_small_still.url); // still image
+                    gifImage.attr("data-animate", results[i].images.fixed_height_small.url); // animated image
+                    gifImage.attr("data-state", "still"); // set the image state
+                    gifImage.addClass("image");
+                    gifDiv.append(gifImage);
+                    // pulling still image of gif
+                    // adding div of gifs to gifsView div
+                    $("#gifsView").prepend(gifDiv);
+                }
+            });
+    }
+    // Calling Functions & Methods
+    displayGifButtons(); // displays list of actions already created
+    addNewButton();
+    removeLastButton();
+    // Document Event Listeners
+    $(document).on("click", ".action", displayGifs);
+    $(document).on("click", ".image", function() {
+        var state = $(this).attr('data-state');
+        if (state == 'still') {
+            $(this).attr('src', $(this).data('animate'));
+            $(this).attr('data-state', 'animate');
         } else {
-            $(this).attr("src", $(this).attr("data-still"));
-            $(this).attr("data-state", "still");
+            $(this).attr('src', $(this).data('still'));
+            $(this).attr('data-state', 'still');
         }
-    }
-
+    });
 });
