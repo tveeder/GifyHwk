@@ -42,6 +42,8 @@ $(document).ready(function() {
         var action = $(this).attr("data-name");
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + action + "&api_key=qniFp18pcQQU4SBz7jcuZjdrEVRAdBmV&limit=10";
         console.log(queryURL); // displays the constructed url
+
+
         $.ajax({
                 url: queryURL,
                 method: 'GET'
