@@ -1,6 +1,6 @@
 $(document).ready(function() {
     // An array of actions, new actions will be pushed into this array;
-    var actions = ["Blondie", "Van Halen", "Billy Idol", "Madonna", "Prince", "Devo", "Duran Duran", "The Cure", "Run-DMC", "The Police", "Hall & Oates"];
+    var actions = ["BLONDIE", "VAN HALEN", "BILLY IDOL", "MADONNA", "PRINCE", "DEVO", "DURAN DURAN", "THE CURE", "RUN-DMC", "THE POLICE", "HALL & OATES", "TALKING HEADS", "U2", "DEPECHE MODE", "THE CLASH", "NEW ORDER", "SIMPLE MINDS", "THE SMITHS", "RED HOT CHILI PEPPERS", "TOTO", "VIOLENT FEMMES"];
     // Creating Functions & Methods
     // Function that displays all gif buttons
     function displayGifButtons() {
